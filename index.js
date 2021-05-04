@@ -30,7 +30,8 @@ const inquirer = require('inquirer');
 
 // ## Description
 
-// Provide a short description explaining the what, why, and how of your project. Use the following questions as a guide:
+// Provide a short description explaining the what, why, and how of your project.
+// Use the following questions as a guide:
 // - What was your motivation?
 // - Why did you build this project? (Note: the answer is not "Because it was a homework assignment.")
 // - What problem does it solve?
@@ -77,6 +78,8 @@ const inquirer = require('inquirer');
 //=======================================================================================================================================================================================================
 //=======================================================================================================================================================================================================
 
+// Suggestions from Elma:
+// -----------------------
 // What is your GitHub username? eyl91
 // What is your email address? email@email.com
 // What is your project's name? Project 1
@@ -101,8 +104,29 @@ inquirer
     },
     {
       type: 'input',
-      message: 'What is your email address?',
+      message: 'What email address would you like to use?',
       name: 'email_addr',
+    },
+    {
+      type: 'input',
+      message: 'Project Description:\n   My primary reason for creating this project was to... ?',
+      name: 'prj_motivator',
+    },
+    {
+      type: 'input',
+      message: ' The primary issue being addressed by this app is... ?',
+      name: 'prj_problem',
+    },
+    {
+      type: 'input',
+      message: ' What was learned by creating this project?',
+      name: 'prj_learned',
+    },
+    {
+      type: 'list',
+      message: ' What license should be associated to this project?',
+      choices: [ "MIT", new inquirer.Separator(), "GNU GPLv3", new inquirer.Separator(), "Community" ],
+      name: 'prj_license',
     },
   ])
   .then( (answers) =>
@@ -112,15 +136,67 @@ inquirer
     //     + "eMail Address: " + answers.email_addr + "\n"
     //     + "GitHub Project: " + answers.prj_name + "\n";
 
-        var sUserResponse = `Name: ${answers.username}
-eMail Address: ${answers.email_addr}
-GitHub Project: ${answers.prj_name}\n`;
-    
-    fs.writeFile('README.md.txt', sUserResponse, (error) =>
+        var sUserResponse = 
+`# Project: ${answers.prj_name}
+
+## Table of Contents
+
+*    [Installation](#installation)
+*    [Usage](#usage)
+*    [License](#license)
+*    [Contributing](#contributing)
+*    [Tests](#tests)
+*    [Questions](#questions)
+
+## User Info:
+   GitHub: https://github.com/${answers.username}   
+   eMail:  ${answers.email_addr}
+
+## Description: 
+   Motivator: ${answers.prj_motivator}   
+   Problem:   ${answers.prj_problem}   
+   Learned:   ${answers.prj_learned}
+
+## Installation
+
+   <a name="installation"></a>
+   
+   \`\`\`shell
+   npm install inquirer
+   \`\`\`
+
+## Usage
+   <a name="usage"></a>
+Here are some steps for the user...
+
+## License
+   <a name="license"></a>
+This project is licensed under the ${answers.prj_license} License.
+
+## Contributing
+   <a name="contributing"></a>
+I do NOT want anyone contributing to this project!
+
+## Tests
+<a name="tests"></a>
+To run tests, run the following command:
+\`\`\`shell
+npm test
+\`\`\`
+
+## Questions
+<a name="questions"></a>
+If you have any questions reguarding this repo, open an issue or
+contact me directly at ${answers.email_addr}
+
+You can find more of my work at: [${answers.username}](https://github.com/${answers.username})
+
+   \n`;
+
+    fs.writeFile('./output/README.md', sUserResponse, (error) =>
         error ? console.error(error) : console.log(`\nFILE CONTENTS:`)
     );
-    fs.readFile('README.md.txt', 'utf8', (error, data) =>
+    fs.readFile('./output/README.md', 'utf8', (error, data) =>
         error ? console.error(error) : console.log(data)
     );
 });
-
