@@ -1,7 +1,27 @@
 // fs is a Node standard library package for reading and writing files
-const fs = require('fs');
+const fs = require( 'fs' );
 
-const inquirer = require('inquirer');
+const inquirer = require( 'inquirer' );
+
+const mdGenerator = require( './utils/generateMarkdown.js' );
+
+// ====================================================================
+// ====================================================================
+// TODO: Include packages needed for this application
+
+// TODO: Create an array of questions for user input
+// const questions = [];
+
+// TODO: Create a function to write README file
+// function writeToFile(fileName, data) {}
+
+// TODO: Create a function to initialize app
+// function init() {}
+
+// Function call to initialize app
+// init();
+// ====================================================================
+// ====================================================================
 
 //---------------------------------------------------------------------
 // inquirer.js:
@@ -90,113 +110,250 @@ const inquirer = require('inquirer');
 // What does the user need to know about using the repo? Here are some steps for the user.
 // What does the user need to know about contributing to the repo? I don't want people contributing!
 
+const primaryQuestions = [
+  {
+    type: 'input',
+    message: 'What is the name of your project?',
+    name: 'prj_name',
+  },
+  {
+    type: 'input',
+    message: 'What is your GitHub username?',
+    name: 'username',
+  },
+  {
+    type: 'input',
+    message: 'What email address would you like to use?',
+    name: 'email_addr',
+  },
+  {
+    type: 'input',
+    message: 'Project Description:\n   My primary reason for creating this project was... ?',
+    name: 'prj_motivator',
+  },
+  {
+    type: 'input',
+    message: ' The primary issue being addressed by this app is... ?',
+    name: 'prj_problem',
+  },
+  {
+    type: 'input',
+    message: ' What was learned by creating this project?',
+    name: 'prj_learned',
+  },
+  {
+    type: 'input',
+    message: 'Enter specific installation requirements (e.g., npm i inquirer):',
+    name: 'install_reqs'
+  },
+  {
+    type: 'input',
+    message: 'Enter specific test instructions (e.g., npm test):',
+    name: 'test_instructions'
+  },
+  {
+    type: 'confirm',
+    message: 'Do you desire contributions to this project?',
+    name: 'prj_contributions'
+  },
+  {
+    type: 'input',
+    message: 'Copyright Information:\n   The copyright year is?',
+    name: 'prj_copyrightYear',
+  },
+  {
+    type: 'input',
+    message: ' The copyright name is?',
+    name: 'prj_copyrightName',
+  },
+  {
+    type: 'list',
+    message: ' What license should be associated to this project?',
+    choices: [ "MIT", new inquirer.Separator(), 
+               "GNU GPLv3", new inquirer.Separator(), 
+               "Community", new inquirer.Separator()
+             ],
+    name: 'prj_license',
+  },
+];
+
+  // [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+  // [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+  // [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  // [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+  // [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+
+  const communityLicenseTypes = [
+  {
+    type: 'list',
+    message: ' What Existing/Community license should be associated to this project?',
+    choices: [ "MIT", 
+                new inquirer.Separator(), "ISC", 
+                new inquirer.Separator(), "Apache v2.0", 
+                new inquirer.Separator(), "GNU GPLv3", 
+                new inquirer.Separator(), "GNU GPLv2",
+                new inquirer.Separator() ],
+    name: 'prj_communityLicense',
+  }
+  ];
+
+let userAnswers = [
+  {
+    sPrjName: "",
+    sUserName: "",
+    sEmailAddr: "",
+    sPrjMotivator: "",
+    sPrjProblem: "",
+    sPrjLearned: "",
+    sCopyrightYear: "",
+    sCopyrightName: "",
+    sPrjLicense: ""
+  },
+  {
+    sCommunityLicense: ""
+  }
+];
+
+// let aQuestions = [];
+// let iTotalQuestions = 2;
+// for( var iQuestionNo=0; iQuestionNo < iTotalQuestions;  iQuestionNo++ )
+// {
+//   console.log( "Question# "+iQuestionNo );
+//   aQuestions = [];
+//   switch( iQuestionNo ) {
+//     case( 0 ):
+//       aQuestions = primaryQuestions;
+//       break;
+//     case( 1 ):
+//       console.log( "License chosen: "+userAnswers[0].sPrjLicense );
+//       if ( userAnswers[0].sPrjLicense === 'Community' ) {
+//         console.log( "LICENSE selected: " + userAnswers[0].sPrjLicense );
+//         aQuestions = communityLicenseTypes;
+//       }
+//       break;
+//   }
+//   if ( aQuestions.length > 0 )
+//   {
+//     inquirer
+//     .prompt( aQuestions )
+//     .then( (answers) =>
+//     {
+//       switch( iQuestionNo ) {
+//         case( 0 ):
+//           userAnswers[0].sPrjName = answers.prj_name;
+//           userAnswers[0].sUserName = answers.username;
+//           userAnswers[0].sEmailAddr = answers.email_addr;
+//           userAnswers[0].sPrjMotivator = answers.sPrjMotivator;
+//           userAnswers[0].sPrjProblem = answers.prj_problem;
+//           userAnswers[0].sPrjLearned = answers.sPrjLearned;
+//           userAnswers[0].sCopyrightYear = answers.prj_copyrightYear;
+//           userAnswers[0].sCopyrightName = answers.prj_copyrightName;
+//           userAnswers[0].sPrjLicense = answers.prj_license;
+//           break;
+//         case( 1 ):
+//           userAnswers[1].sCommunityLicense = answers.prj_communityLicense;
+//           break;
+//       }
+//     });
+//   }
+// }
+
+// console.log( mdGenerator.getUserInput(primaryQuestions) );
+// console.log( mdGenerator.getUserInput(communityLicenseTypes) );
+
 inquirer
-  .prompt([
-    {
-      type: 'input',
-      message: 'What is the name of your project?',
-      name: 'prj_name',
-    },
-    {
-      type: 'input',
-      message: 'What is your GitHub username?',
-      name: 'username',
-    },
-    {
-      type: 'input',
-      message: 'What email address would you like to use?',
-      name: 'email_addr',
-    },
-    {
-      type: 'input',
-      message: 'Project Description:\n   My primary reason for creating this project was to... ?',
-      name: 'prj_motivator',
-    },
-    {
-      type: 'input',
-      message: ' The primary issue being addressed by this app is... ?',
-      name: 'prj_problem',
-    },
-    {
-      type: 'input',
-      message: ' What was learned by creating this project?',
-      name: 'prj_learned',
-    },
-    {
-      type: 'list',
-      message: ' What license should be associated to this project?',
-      choices: [ "MIT", new inquirer.Separator(), "GNU GPLv3", new inquirer.Separator(), "Community" ],
-      name: 'prj_license',
-    },
-  ])
+  .prompt( primaryQuestions )
   .then( (answers) =>
   {
-    // var sUserResponse = 
-    //     "\nName: " + answers.username + "\n"
-    //     + "eMail Address: " + answers.email_addr + "\n"
-    //     + "GitHub Project: " + answers.prj_name + "\n";
+    // if ( answers.prj_license === 'Community' ) {
+    //   inquirer
+    //   .prompt( communityLicenseTypes )
+    //   .then( (communityLicenseAnswer) =>
+    //   {
+    //     console.log( communityLicenseAnswer );
+    //     prj_license = communityLicenseAnswer.name;
+    //   });
+    // }
+  
+// var sUserResponse = 
+// `# Project: ${answers.prj_name}
 
-        var sUserResponse = 
-`# Project: ${answers.prj_name}
+// ${mdGenerator.renderLicenseBadge(answers.prj_license)}
 
-## Table of Contents
+// ## Table of Contents
 
-*    [Installation](#installation)
-*    [Usage](#usage)
-*    [License](#license)
-*    [Contributing](#contributing)
-*    [Tests](#tests)
-*    [Questions](#questions)
+// *    [Installation](#installation)
+// *    [Usage](#usage)
+// *    [Contributing](#contributing)
+// *    [Tests](#tests)
+// *    [Questions](#questions)
+// *    [License](#license)
 
-## User Info:
-   GitHub: https://github.com/${answers.username}   
-   eMail:  ${answers.email_addr}
+// ## User Info:
+//    GitHub: https://github.com/${answers.username}   
+//    eMail:  ${answers.email_addr}
 
-## Description: 
-   Motivator: ${answers.prj_motivator}   
-   Problem:   ${answers.prj_problem}   
-   Learned:   ${answers.prj_learned}
+// ## Description: 
+//    Motivator: ${answers.prj_motivator}   
+//    Problem:   ${answers.prj_problem}   
+//    Learned:   ${answers.prj_learned}
 
-## Installation
+// ## Installation
 
-   <a name="installation"></a>
+//    <a name="installation"></a>
    
-   \`\`\`shell
-   npm install inquirer
-   \`\`\`
+//    \`\`\`shell
+//    npm install inquirer
+//    \`\`\`
 
-## Usage
-   <a name="usage"></a>
-Here are some steps for the user...
+// ## Usage
+//    <a name="usage"></a>
+// Here are some steps for the user...
 
-## License
-   <a name="license"></a>
-This project is licensed under the ${answers.prj_license} License.
+// ## Contributing
+//    <a name="contributing"></a>
+// I do NOT want anyone contributing to this project!
 
-## Contributing
-   <a name="contributing"></a>
-I do NOT want anyone contributing to this project!
+// ## Tests
+// <a name="tests"></a>
+// To run tests, run the following command:
+// \`\`\`shell
+// npm test
+// \`\`\`
 
-## Tests
-<a name="tests"></a>
-To run tests, run the following command:
-\`\`\`shell
-npm test
-\`\`\`
+// ## Questions
+// <a name="questions"></a>
+// If you have any questions reguarding this repo, open an issue or
+// contact me directly at ${answers.email_addr}
 
-## Questions
-<a name="questions"></a>
-If you have any questions reguarding this repo, open an issue or
-contact me directly at ${answers.email_addr}
+// You can find more of my work at: [${answers.username}](https://github.com/${answers.username})
 
-You can find more of my work at: [${answers.username}](https://github.com/${answers.username})
+// ## License
+// <a name="license"></a>
 
-   \n`;
+// Copyright (c) ${answers.prj_copyrightYear} ${answers.prj_copyrightName}. All rights reserved.
 
-    fs.writeFile('./output/README.md', sUserResponse, (error) =>
-        error ? console.error(error) : console.log(`\nFILE CONTENTS:`)
-    );
-    fs.readFile('./output/README.md', 'utf8', (error, data) =>
-        error ? console.error(error) : console.log(data)
-    );
+// Licensed under the [${answers.prj_license}](./LICENSE.txt) license.
+
+// \n`;
+
+let sPrjContributions = "";
+if ( answers.prj_contributions ) {
+sPrjContributions = `There are many ways in which you can participate in the ${answers.prj_name} project, for example:
+*    [Submit bugs and feature requests](https://github.com/JEMinick/${answers.prj_name}/issues), and help verify they are checked in;
+*    Review [source code changes](https://github.com/JEMinick/${answers.prj_name}/pulls); and,
+*    Review the documentation and make pull requests for anything from typos to new content.`
+}
+else {
+  sPrjContributions = `I do not desire any contributions to project ${answers.prj_name}...`;
+}
+
+var sUserResponse = mdGenerator.generateMarkdown(answers,sPrjContributions);
+
+    // fs.writeFile('./output/README2.md', sUserResponse, (error) =>
+    //     error ? console.error(error) : console.log(`\nFILE CONTENTS:`)
+    // );
+    // fs.readFile('./output/README2.md', 'utf8', (error, data) =>
+    //     error ? console.error(error) : console.log(data)
+    // );
 });
