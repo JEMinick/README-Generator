@@ -108,113 +108,120 @@ const mdGenerator = require( './utils/generateMarkdown.js' );
 // What does the user need to know about using the repo? Here are some steps for the user.
 // What does the user need to know about contributing to the repo? I don't want people contributing!
 
-const primaryQuestions = [
-  {
-    type: 'input',
-    message: 'What is the name of your project?',
-    name: 'prj_name',
-  },
-  {
-    type: 'input',
-    message: 'What is your GitHub username?',
-    name: 'username',
-  },
-  {
-    type: 'input',
-    message: 'What email address would you like to use?',
-    name: 'email_addr',
-  },
-  {
-    type: 'input',
-    message: 'Project Description:\n   My primary reason for creating this project was... ?',
-    name: 'prj_motivator',
-  },
-  {
-    type: 'input',
-    message: ' The primary issue being addressed by this app is... ?',
-    name: 'prj_problem',
-  },
-  {
-    type: 'input',
-    message: ' What was learned by creating this project?',
-    name: 'prj_learned',
-  },
-  {
-    type: 'input',
-    message: 'Enter specific installation requirements (e.g., npm i inquirer):',
-    name: 'install_reqs'
-  },
-  {
-    type: 'input',
-    message: 'Enter specific test instructions (e.g., npm test):',
-    name: 'test_instructions'
-  },
-  {
-    type: 'confirm',
-    message: 'Do you desire contributions to this project?',
-    name: 'prj_contributions'
-  },
-  {
-    type: 'input',
-    message: 'Copyright Information:\n   The copyright year(s):',
-    name: 'prj_copyrightYear',
-  },
-  {
-    type: 'input',
-    message: ' The copyright name:',
-    name: 'prj_copyrightName',
-  },
-  {
-    type: 'list',
-    message: ' What license should be associated to this project?',
-    choices: [ "MIT",         
-               "ISC",
-               new inquirer.Separator(),
-               "GNU GPLv3",
-               "GNU GPLv2",
-               "Apache v2.0"
-             ],
-    name: 'prj_license',
-  },
-];
+let primaryQuestions = [];
+function init()
+{
+  primaryQuestions = [
+    {
+      type: 'input',
+      message: 'What is the name of your project?',
+      name: 'prj_name',
+    },
+    {
+      type: 'input',
+      message: 'What is your GitHub username?',
+      name: 'username',
+    },
+    {
+      type: 'input',
+      message: 'What email address would you like to use?',
+      name: 'email_addr',
+    },
+    {
+      type: 'input',
+      message: 'Project Description:\n   My primary reason for creating this project was... ?',
+      name: 'prj_motivator',
+    },
+    {
+      type: 'input',
+      message: ' The primary issue being addressed by this app is... ?',
+      name: 'prj_problem',
+    },
+    {
+      type: 'input',
+      message: ' What was learned by creating this project?',
+      name: 'prj_learned',
+    },
+    {
+      type: 'input',
+      message: 'Enter specific installation requirements (e.g., npm i inquirer):',
+      name: 'install_reqs'
+    },
+    {
+      type: 'input',
+      message: 'Enter specific test instructions (e.g., npm test):',
+      name: 'test_instructions'
+    },
+    {
+      type: 'confirm',
+      message: 'Do you desire contributions to this project?',
+      name: 'prj_contributions'
+    },
+    {
+      type: 'input',
+      message: 'Copyright Information:\n   The copyright year(s):',
+      name: 'prj_copyrightYear',
+    },
+    {
+      type: 'input',
+      message: ' The copyright name:',
+      name: 'prj_copyrightName',
+    },
+    {
+      type: 'list',
+      message: ' What license should be associated to this project?',
+      choices: [ "MIT",         
+                "ISC",
+                new inquirer.Separator(),
+                "GNU GPLv3",
+                "GNU GPLv2",
+                "Apache v2.0"
+              ],
+      name: 'prj_license',
+    }
+  ];
 
+  // prj_license associations:
+  // --------------------------
   // [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
   // [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
   // [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   // [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
   // [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
-  const communityLicenseTypes = [
-  {
-    type: 'list',
-    message: ' What Existing/Community license should be associated to this project?',
-    choices: [ "MIT", 
-                new inquirer.Separator(), "ISC", 
-                new inquirer.Separator(), "Apache v2.0", 
-                new inquirer.Separator(), "GNU GPLv3", 
-                new inquirer.Separator(), "GNU GPLv2",
-                new inquirer.Separator() ],
-    name: 'prj_communityLicense',
-  }
-  ];
+  // const communityLicenseTypes = [
+  // {
+  //   type: 'list',
+  //   message: ' What Existing/Community license should be associated to this project?',
+  //   choices: [ "MIT", 
+  //               new inquirer.Separator(), "ISC", 
+  //               new inquirer.Separator(), "Apache v2.0", 
+  //               new inquirer.Separator(), "GNU GPLv3", 
+  //               new inquirer.Separator(), "GNU GPLv2",
+  //               new inquirer.Separator() ],
+  //   name: 'prj_communityLicense',
+  // }
+  // ];
+}
 
-let userAnswers = [
-  {
-    sPrjName: "",
-    sUserName: "",
-    sEmailAddr: "",
-    sPrjMotivator: "",
-    sPrjProblem: "",
-    sPrjLearned: "",
-    sCopyrightYear: "",
-    sCopyrightName: "",
-    sPrjLicense: ""
-  },
-  {
-    sCommunityLicense: ""
-  }
-];
-
+// -----------------------------
+// let userAnswers = [
+//   {
+//     sPrjName: "",
+//     sUserName: "",
+//     sEmailAddr: "",
+//     sPrjMotivator: "",
+//     sPrjProblem: "",
+//     sPrjLearned: "",
+//     sCopyrightYear: "",
+//     sCopyrightName: "",
+//     sPrjLicense: ""
+//   },
+//   {
+//     sCommunityLicense: ""
+//   }
+// ];
+// -----------------------------
 // let aQuestions = [];
 // let iTotalQuestions = 2;
 // for( var iQuestionNo=0; iQuestionNo < iTotalQuestions;  iQuestionNo++ )
@@ -258,15 +265,16 @@ let userAnswers = [
 //     });
 //   }
 // }
-
+// ------------------------------------------------------------------
 // console.log( mdGenerator.getUserInput(primaryQuestions) );
 // console.log( mdGenerator.getUserInput(communityLicenseTypes) );
+// ------------------------------------------------------------------
 
+function askQuestions() {
 inquirer
 .prompt( primaryQuestions )
 .then( (answers) =>
 {
-
 let sPrjContributions = "";
 if ( answers.prj_contributions ) {
 sPrjContributions = `There are many ways in which you can participate in the ${answers.prj_name} project, for example:
@@ -275,9 +283,15 @@ sPrjContributions = `There are many ways in which you can participate in the ${a
 *    Review the documentation and make pull requests for anything from typos to new content.`
 }
 else {
-  sPrjContributions = `I do not desire any contributions to project ${answers.prj_name}...`;
+sPrjContributions = `I do not desire any contributions to project ${answers.prj_name}...`;
 }
 
 var sUserResponse = mdGenerator.generateMarkdown(answers,sPrjContributions);
 
 });
+}
+
+// =========================================================================================================================
+
+init();
+askQuestions();
