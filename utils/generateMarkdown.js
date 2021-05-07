@@ -1,3 +1,4 @@
+let bDebugging = false;
 
 const fs = require( 'fs' );
 const inquirer = require( 'inquirer' );
@@ -19,28 +20,35 @@ function renderLicenseBadge(license) {
       case "MIT":
         sURL = "[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)";
         break;
+      case "ISC":
+        sURL = "[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)";
+        break;
+      case "GNU GPLv2":
+        sURL = "[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)";
+        break;
       case "GNU GPLv3":
         sURL = "[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)";
         break;
-      case "Community":
+      case "Apache v2.0":
+        sURL = "[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)";
         break;
       default:
         break;
     }
   }
 
-  // MIT license:
-  // [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  
-  // GNU license:
-  // [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-  
-  // Existing/Community licenses:
-  // [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-  // [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-  // [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  // [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
-  // [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+  // Basic Licenses:
+  //   MIT license:
+  //     [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  //   GNU license:
+  //     [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+  //
+  // Common Existing/Community licenses:
+  //   [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+  //   [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+  //   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  //   [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+  //   [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
   
   sBadgeURL = sURL;
   
@@ -53,6 +61,8 @@ function renderLicenseLink(license,sCopyrightYear,sCopyrightName)
 {
   var sSrcLicense = "";
   var sDestLicense = "./output/LICENSE";
+  var sDest2License = "./output/LICENSE2";
+  
   switch ( license ) {
     case "Apache v2.0":
       sSrcLicense = "Apache-v2-LICENSE.txt";
@@ -72,6 +82,7 @@ function renderLicenseLink(license,sCopyrightYear,sCopyrightName)
     default:
       sDestLicense = "";
   }
+  
   if ( sSrcLicense.length > 0 )
   {
     fs.readFile(sSrcLicense, 'utf8', (error, data) => {
@@ -86,8 +97,11 @@ function renderLicenseLink(license,sCopyrightYear,sCopyrightName)
           }
           else
           {
-            console.log( `LICENSE TEXT: (length of data: ${data.length})` );
-            // console.log( data );
+            if ( bDebugging ) {
+              console.log( `LICENSE TEXT: (length of data: ${data.length})` );
+              console.log( `Parameters: License:[${license}], Year:[${sCopyrightYear}], Name:[${sCopyrightName}]` );
+              // console.log( data );
+            }
             
             let iLineCount=0;
             var sData = data;
@@ -98,58 +112,150 @@ function renderLicenseLink(license,sCopyrightYear,sCopyrightName)
             //   console.log( iLineCount, element )
             // });
             
+            // Identify the 'search-n-replace' tokens:
             const snrTokens = [
-              '[${crYear}]',
-              '[${crName}]' ];
+              { token: '[${crYear}]', replacement: sCopyrightYear },
+              { token: '[${crName}]', replacement: sCopyrightName } ];
+            var iTokenUpdates=0;
             var iSubIdx=-1;
-            var sPrefix="", sPostfix="";
+            var sLeadingTxt="", sTrailingTxt="";
             
-            for( var i=0; ( i < sSentences.length ); i++ ) {
-              console.log( `\nSearching sentence: [${sSentences[i]}]` );
-              for( var j=0; (j < snrTokens.length); j++ ) {
-                iSubIdx=-1;
-                sPrefix="";
-                sPostfix="";
-                iSubIdx = sSentences[i].indexOf(snrTokens[j]);
-                console.log( sSentences[i], iSubIdx, snrTokens[j] );
-                switch( j ) {
-                  case 0: // Copyright Year, 
-                    if ( iSubIdx >= 0 ) {
-                      console.log( `Found token: ${snrTokens[j]}` );
-                      if ( iSubIdx > 0 ) {
-                        sPrefix = sSentences[i].substr(0,iSubIdx);
-                      }
-                      if ( sSentences[i].length > (iSubIdx+snrTokens[j].length) ) {
-                        sPostfix = sSentences[i].substring( iSubIdx+snrTokens[j].length, sSentences[i].length );
-                      }
-                      // sSentences[i] = sPrefix + sCopyrightYear + sPostfix;
-                      console.log( `Line: [${sSentences[i]}]` );
-                      console.log( `Replace token "${snrTokens[j]}"` );
-                      console.log( `Sub-index: [${iSubIdx}]` );
-                      console.log( `Line prefix: "${sPrefix}"` );
-                      console.log( `Line postfix: "${sPostfix}"` );
-                    }
-                    break;
-                  case 1: // Copyright Name
-                    break;
+            for( let i=0; ( i < sSentences.length ); i++ )
+            {
+              // console.log( `\nSearching sentence: [${sSentences[i]}]` );
+              for( var j=0; (j < snrTokens.length); j++ )
+              {
+                // iSubIdx = -1;
+                iSubIdx = sSentences[i].indexOf(snrTokens[j].token);
+                // console.log( sSentences[i], iSubIdx, snrTokens[j] );
+
+                if ( iSubIdx >= 0 ) {
+                  if ( bDebugging )
+                    console.log( `Found token: ${snrTokens[j].token}` );
+                  if ( iSubIdx > 0 ) {
+                    sLeadingTxt = sSentences[i].substr(0,iSubIdx);
+                  } else {
+                    sLeadingTxt = "";
+                  }
+                  if ( sSentences[i].length > (iSubIdx+snrTokens[j].token.length) ) {
+                    sTrailingTxt = sSentences[i].substring( iSubIdx+snrTokens[j].token.length, sSentences[i].length );
+                  } else {
+                    sTrailingTxt = "";
+                  }
+                  if ( bDebugging ) {
+                    console.log( `   Line before update: [${sSentences[i]}]` );
+                    // console.log( `Replace token "${snrTokens[j].token}"` );
+                    // console.log( `Sub-index: [${iSubIdx}]` );
+                    // console.log( `Line prefix: "${sLeadingTxt}"` );
+                    // console.log( `Line postfix: "${sTrailingTxt}"` );
+                  }
+                  sSentences[i] = sLeadingTxt 
+                                  // + ( j === 0 ? sCopyrightYear : sCopyrightName )
+                                  + snrTokens[j].replacement
+                                  + sTrailingTxt;
+                  if ( bDebugging )
+                    console.log( `   Line after update: [${sSentences[i]}]` );
+                  iTokenUpdates++;
                 }
+
               }
               iLineCount++;
-              console.log( iLineCount, sSentences[i] );
+              if ( bDebugging )
+                console.log( iLineCount, sSentences[i] );
             }
-
-            console.log( `Total line count: [${iLineCount}]` );
+            
+            if ( bDebugging )
+              console.log( `Total line count: [${iLineCount}]\n` );
+            
+            if ( iTokenUpdates > 0 )
+            {
+              // Begin with a new file:
+              fs.unlink( sDestLicense, (err) => {
+                if ( err ) {
+                  if ( err.code === 'ENOENT' ) {
+                    err = false;
+                  } else {
+                    console.error(err);
+                    sDest2License = "";
+                  }
+                } 
+                if ( !err )
+                {
+                  var iLinesWritten=0;
+                  //----------------------------------------------------------------------
+                  // 2021-May-06:  Creating the new file in this fashion creates
+                  //               some really strange results...
+                  //
+                  // var bAbort=false;
+                  // for( let k=0; (!bAbort) && (k < sSentences.length); k++ ) {
+                  //   fs.appendFile( sDest2License, sSentences[k]+"\n", (error) => {
+                  //     if ( error ) {
+                  //       console.error(error);
+                  //       sDest2License = "";
+                  //       bAbort = true;
+                  //     }
+                  //     else
+                  //     {
+                  //       iLinesWritten++;
+                  //       console.log( iLinesWritten, `${sSentences[k]}` );
+                  //     }
+                  //   });
+                  // } // endFor
+                  //----------------------------------------------------------------------
+                  
+                  data = '';
+                  for( let k=0; (k < sSentences.length); k++ ) {
+                    iLinesWritten++;
+                    // console.log( iLinesWritten, sSentences[k] );
+                    // data += ( sSentences[k] + "\n" );
+                    data += ( `${sSentences[k]}\n` );
+                  }
+                  
+                  fs.writeFile(sDestLicense, data, (error) => {
+                    if ( error ) {
+                      console.error( error );
+                      sDest2License = "";
+                    }
+                    else {
+                      if ( bDebugging )
+                        console.log( `New Total line count: [${iLinesWritten}]\n` );
+                    }
+                  })
+                  
+                } // endIf !err
+                
+              }) // endUnlink
+              
+            }
             
             // for( var i=0; i < data.length; i++ ) {
             //   console.log( data[i] );
             // }
             
-          }
+          } // endElseIf writeFile succeeded
+          
         });
       }
     });
   }
   return( sDestLicense );
+}
+
+// ======================================================================================
+
+function renderTestingSection(testInstructions) {
+var sTestingSection = '';
+if ( testInstructions.length > 0 ) {
+sTestingSection = 
+`To run tests, run the following command(s):
+\`\`\`shell
+${testInstructions}
+\`\`\``;
+} else {
+sTestingSection =
+`   Tests are not yet defined...`;
+}
+return sTestingSection;
 }
 
 // ======================================================================================
@@ -163,7 +269,7 @@ Licensed under the [${licenseType}](./LICENSE) license.`;
 
 // ======================================================================================
 
-function generateMarkdown(data,sPrjContributions)
+function generateMarkdown( data, sPrjContributions )
 {
 // ---------------------------------------
 // *    [Usage](#usage)
@@ -177,6 +283,14 @@ function generateMarkdown(data,sPrjContributions)
 // ---------------------------------------
 // Copyright (c) ${data.prj_copyrightYear} ${data.prj_copyrightName}. All rights reserved.
 // Licensed under the [${data.prj_license}](./LICENSE.txt) license.
+// ---------------------------------------
+// \`\`\`shell
+// ${data.test_instructions}
+// \`\`\`
+// ---------------------------------------
+
+if ( bDebugging )
+  console.log( data );
 
 var mdText = 
 `# Project: ${data.prj_name}
@@ -199,7 +313,7 @@ var mdText =
 
 The primary motivation for creating ${data.prj_name} was ${data.prj_motivator}.
 The problem being addressed and resolved with this app is ${data.prj_problem}.
-By creating this app, I learned the following: ${data.prj_learned}
+By creating this app, I learned the following: ${data.prj_learned}.
 
 ## Installation
 <a name="installation"></a>
@@ -216,10 +330,7 @@ ${sPrjContributions}
 
 ## Tests
 <a name="tests"></a>
-To run tests, run the following command(s):
-\`\`\`shell
-${data.test_instructions}
-\`\`\`
+${renderTestingSection(data.test_instructions)}
 
 ## Questions
 <a name="questions"></a>
@@ -244,7 +355,8 @@ ${renderLicenseSection(data.prj_copyrightYear,data.prj_copyrightName,data.prj_li
         console.error(error);
       }
     } else {
-      console.log( "Created ./output folder..." );
+      if ( bDebugging )
+        console.log( "Created ./output folder..." );
     }
   });
   if ( !bError ) {
@@ -253,7 +365,8 @@ ${renderLicenseSection(data.prj_copyrightYear,data.prj_copyrightName,data.prj_li
         bError = true;
         console.error(error);
       } else {
-        console.log(`\nFILE CONTENTS:`)
+        if ( bDebugging )
+          console.log(`\nFILE CONTENTS:`)
       }
     });
   }
@@ -263,12 +376,14 @@ ${renderLicenseSection(data.prj_copyrightYear,data.prj_copyrightName,data.prj_li
         bError = true;
         console.error(error);
       } else {
-        console.log( `Files created are located in: ./output/...`);
+        console.log( `\nFiles created are located in: ./output/...`);
       }
     });
   }
   if ( !bError ) {
-    var sLicenseInfo = renderLicenseLink(data.prj_license,data.sCopyrightYear,data.sCopyrightName);
+    var sLicenseInfo = renderLicenseLink( data.prj_license,
+                                          data.prj_copyrightYear,
+                                          data.prj_copyrightName );
   }
   
   return( mdText );
@@ -287,19 +402,19 @@ let userAnswers =
     sPrjLicense: ""
   };
 
-function getUserInput( questions ) {
-  console.log( 'Ask the following questions:' );
-  console.log( questions );
-  inquirer
-  .prompt( questions )
-  .then( (answers) =>
-  {
-  });
-  return answers;
-}
+// function getUserInput( questions ) {
+//   console.log( 'Ask the following questions:' );
+//   console.log( questions );
+//   inquirer
+//   .prompt( questions )
+//   .then( (answers) =>
+//   {
+//   });
+//   return answers;
+// }
 
 module.exports = {
-  getUserInput,
+  // getUserInput,
   renderLicenseBadge,
   generateMarkdown
 }

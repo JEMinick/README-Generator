@@ -1,8 +1,6 @@
 // fs is a Node standard library package for reading and writing files
 const fs = require( 'fs' );
-
 const inquirer = require( 'inquirer' );
-
 const mdGenerator = require( './utils/generateMarkdown.js' );
 
 // ====================================================================
@@ -158,20 +156,23 @@ const primaryQuestions = [
   },
   {
     type: 'input',
-    message: 'Copyright Information:\n   The copyright year is?',
+    message: 'Copyright Information:\n   The copyright year(s):',
     name: 'prj_copyrightYear',
   },
   {
     type: 'input',
-    message: ' The copyright name is?',
+    message: ' The copyright name:',
     name: 'prj_copyrightName',
   },
   {
     type: 'list',
     message: ' What license should be associated to this project?',
-    choices: [ "MIT", new inquirer.Separator(), 
-               "GNU GPLv3", new inquirer.Separator(), 
-               "Community", new inquirer.Separator()
+    choices: [ "MIT",         
+               "ISC",
+               new inquirer.Separator(),
+               "GNU GPLv3",
+               "GNU GPLv2",
+               "Apache v2.0"
              ],
     name: 'prj_license',
   },
@@ -262,80 +263,9 @@ let userAnswers = [
 // console.log( mdGenerator.getUserInput(communityLicenseTypes) );
 
 inquirer
-  .prompt( primaryQuestions )
-  .then( (answers) =>
-  {
-    // if ( answers.prj_license === 'Community' ) {
-    //   inquirer
-    //   .prompt( communityLicenseTypes )
-    //   .then( (communityLicenseAnswer) =>
-    //   {
-    //     console.log( communityLicenseAnswer );
-    //     prj_license = communityLicenseAnswer.name;
-    //   });
-    // }
-  
-// var sUserResponse = 
-// `# Project: ${answers.prj_name}
-
-// ${mdGenerator.renderLicenseBadge(answers.prj_license)}
-
-// ## Table of Contents
-
-// *    [Installation](#installation)
-// *    [Usage](#usage)
-// *    [Contributing](#contributing)
-// *    [Tests](#tests)
-// *    [Questions](#questions)
-// *    [License](#license)
-
-// ## User Info:
-//    GitHub: https://github.com/${answers.username}   
-//    eMail:  ${answers.email_addr}
-
-// ## Description: 
-//    Motivator: ${answers.prj_motivator}   
-//    Problem:   ${answers.prj_problem}   
-//    Learned:   ${answers.prj_learned}
-
-// ## Installation
-
-//    <a name="installation"></a>
-   
-//    \`\`\`shell
-//    npm install inquirer
-//    \`\`\`
-
-// ## Usage
-//    <a name="usage"></a>
-// Here are some steps for the user...
-
-// ## Contributing
-//    <a name="contributing"></a>
-// I do NOT want anyone contributing to this project!
-
-// ## Tests
-// <a name="tests"></a>
-// To run tests, run the following command:
-// \`\`\`shell
-// npm test
-// \`\`\`
-
-// ## Questions
-// <a name="questions"></a>
-// If you have any questions reguarding this repo, open an issue or
-// contact me directly at ${answers.email_addr}
-
-// You can find more of my work at: [${answers.username}](https://github.com/${answers.username})
-
-// ## License
-// <a name="license"></a>
-
-// Copyright (c) ${answers.prj_copyrightYear} ${answers.prj_copyrightName}. All rights reserved.
-
-// Licensed under the [${answers.prj_license}](./LICENSE.txt) license.
-
-// \n`;
+.prompt( primaryQuestions )
+.then( (answers) =>
+{
 
 let sPrjContributions = "";
 if ( answers.prj_contributions ) {
@@ -350,10 +280,4 @@ else {
 
 var sUserResponse = mdGenerator.generateMarkdown(answers,sPrjContributions);
 
-    // fs.writeFile('./output/README2.md', sUserResponse, (error) =>
-    //     error ? console.error(error) : console.log(`\nFILE CONTENTS:`)
-    // );
-    // fs.readFile('./output/README2.md', 'utf8', (error, data) =>
-    //     error ? console.error(error) : console.log(data)
-    // );
 });
