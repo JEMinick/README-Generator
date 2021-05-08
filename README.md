@@ -24,7 +24,7 @@ By creating this app, I learned the following: node.js and the inquirer module.
 Naturally, this README was created with this README-Generator!
 
 If you would like to view a short video demonstrating the use of this tool, visit:
-[README-Generator video](https://youtu.be/yEzbvd9a7Co)
+[README-Generator video](https://youtu.be/HSCWvFNMoPI)
 
 ## Installation
 <a name="installation"></a>
