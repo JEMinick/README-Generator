@@ -111,10 +111,16 @@ const mdGenerator = require( './utils/generateMarkdown.js' );
 let primaryQuestions = [];
 function init()
 {
+  // {
+  //   type: 'input',
+  //   message: 'The application will output...',
+  //   name: 'prj_output'
+  // },
+  
   primaryQuestions = [
     {
       type: 'input',
-      message: 'What is the name of your project?',
+      message: 'What is the name of your GitHub project?',
       name: 'prj_name',
     },
     {
@@ -146,6 +152,11 @@ function init()
       type: 'input',
       message: 'Enter specific installation requirements (e.g., npm i inquirer):',
       name: 'install_reqs'
+    },
+    {
+      type: 'input',
+      message: 'To invoke this application:',
+      name: 'prj_usageCmd'
     },
     {
       type: 'input',
