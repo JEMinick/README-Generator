@@ -4,15 +4,14 @@ const fs = require( 'fs' );
 const inquirer = require( 'inquirer' );
 
 let sBadgeURL = "";
+let bError = false;
 
-// TODO: Create a function that returns a license badge based on which license is passed in
-// If there is no license, return an empty string
 function renderLicenseBadge(license) {
   
   var sURL = "";
 
   if ( license === null || license.length === 0 ) {
-    sURL = "UNDEFINED";
+    sURL = "";
   }
   else {
     // Expected choices: "MIT", "GNU GPLv3", "Community"
@@ -55,8 +54,6 @@ function renderLicenseBadge(license) {
   return sURL;
 }
 
-// TODO: Create a function that returns the license link
-// If there is no license, return an empty string
 function renderLicenseLink(license,sCopyrightYear,sCopyrightName)
 {
   var sSrcLicense = "";
@@ -300,6 +297,7 @@ var mdText =
 ## Table of Contents
 
 *    [Installation](#installation)
+*    [Usage](#usage)
 *    [Contributing](#contributing)
 *    [Tests](#tests)
 *    [Questions](#questions)
@@ -324,6 +322,11 @@ Modules and packages required to be installed:
 ${data.install_reqs}
 \`\`\`
 
+## Usage
+<a name="usage"></a>
+
+To run this application, ${data.prj_usageCmd}
+
 ## Contributing
 <a name="contributing"></a>
 ${sPrjContributions}
@@ -345,11 +348,12 @@ ${renderLicenseSection(data.prj_copyrightYear,data.prj_copyrightName,data.prj_li
 
 \n`;
 
-  var bError = false;
+  bError = false;
   fs.mkdir( './output', (error) => {
     if ( error ) {
       if ( error.errno === -4075 ) {
         // directory already exists...
+        // console.error(error);
       } else {
         bError = true;
         console.error(error);
